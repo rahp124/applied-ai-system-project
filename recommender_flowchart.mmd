@@ -1,0 +1,17 @@
+flowchart TD
+    A([Start]) --> B[Load User Profile (preferences)]
+    B --> C[Load Song Dataset from songs.csv]
+    C --> D[Initialize empty list: scored_songs]
+    D --> E{{Loop: More songs remaining?}}
+
+    E -- Yes --> F[Read next song]
+    F --> G[Calculate Genre/Mood Score]
+    G --> H[Calculate Energy Proximity Score]
+    H --> I[Compute Total Song Score]
+    I --> J[Append (song, total_score) to scored_songs]
+    J --> E
+
+    E -- No --> K[Sort scored_songs by total_score (descending)]
+    K --> L[Select Top K songs]
+    L --> M[Return Top K Recommendations]
+    M --> N([End])

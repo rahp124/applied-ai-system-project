@@ -9,3 +9,45 @@ id,title,artist,genre,mood,energy,tempo_bpm,valence,danceability,acousticness
 8,Night Drive Loop,Neon Echo,synthwave,moody,0.75,110,0.49,0.73,0.22
 9,Focus Flow,LoRoom,lofi,focused,0.40,80,0.59,0.60,0.78
 10,Rooftop Lights,Indigo Parade,indie pop,happy,0.76,124,0.81,0.82,0.35
+11,Velvet Dawn Quartet,Aurelia Strings,classical,serene,0.22,68,0.62,0.18,0.97
+12,Iron Cathedral,Forge of Ash,heavy metal,aggressive,0.96,176,0.34,0.49,0.03
+13,Blue Lantern Alley,Mara Kline,blues,melancholic,0.44,92,0.41,0.57,0.74
+14,Saffron Sunset,River Palm,reggae,carefree,0.63,88,0.79,0.83,0.36
+15,Neon Bazaar,Rhythm Cartel,latin,euphoric,0.81,128,0.86,0.91,0.21
+16,Backroad Constellations,Hollow Pines,country,nostalgic,0.52,104,0.67,0.64,0.58
+17,Midwinter Hearth,Northvale,folk,wistful,0.33,76,0.55,0.39,0.88
+18,Chrome Skyline,Data Pulse,techno,hypnotic,0.89,132,0.58,0.87,0.07
+19,Velour Circuit,The Syncopators,funk,playful,0.74,116,0.82,0.89,0.19
+20,Temple of Echoes,Solar Bloom,new age,meditative,0.27,62,0.61,0.24,0.95
+# Critique of the UserProfile
+
+# 1. Expressiveness for Differentiating Intense Rock vs. Chill Lofi
+The profile is not expressive enough to clearly differentiate intense rock from chill lofi. Most fields are set to single target values (e.g., energy, tempo, valence), which biases recommendations toward songs that closely match those specific values. Intense rock and chill lofi differ greatly in energy, tempo, and mood, but this profile is centered on upbeat, happy, pop-like characteristics, making it unlikely to recommend chill lofi or intense rock.
+
+# 2. Narrowness/Bias Toward Upbeat Pop
+Yes, the profile is quite narrow and biased toward upbeat, pop-like songs:
+- "favorite_genre": "indie pop"
+- "favorite_mood": "happy"
+- High target values for energy, valence, danceability, and moderate tempo
+- "likes_acoustic": false
+
+This will mostly surface pop, indie pop, and possibly some funk or latin tracks, but will exclude chill, low-energy, or intense genres.
+
+# 3. Fields to Relax or Expand
+To improve separation across genres/moods, consider:
+- Use ranges for "target_energy" and "target_tempo_bpm" (e.g., energy: 0.4–0.9, tempo: 80–140)
+- Allow multiple favorite genres or moods (e.g., ["indie pop", "lofi", "rock"])
+- Make "favorite_mood" a list or allow for a mood spectrum (e.g., ["happy", "chill", "intense"])
+
+# 4. Suggested Revised Profile
+{
+    "favorite_genre": ["indie pop", "lofi", "rock"],
+    "favorite_mood": ["happy", "chill", "intense"],
+    "target_energy_range": [0.4, 0.9],
+    "target_tempo_bpm_range": [80, 140],
+    "target_valence_range": [0.5, 0.9],
+    "target_danceability_range": [0.6, 0.9],
+    "target_acousticness_range": [0.1, 0.7],
+    "likes_acoustic": null
+}
+This profile allows for both high- and low-energy tracks, supports a broader set of genres/moods, and is more realistic for diverse recommendations.
