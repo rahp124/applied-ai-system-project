@@ -85,23 +85,44 @@ def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
     score = 0.0
     reasons: List[str] = []
 
-    # Weighted categorical matches
-    if song.get("genre") == user_prefs.get("genre"):
-        score += 2.0
+    # Support both naming styles:
+    # new: favorite_genre/favorite_mood/target_energy/likes_acoustic
+    # old: genre/mood/energy
+    preferred_genre = user_prefs.get("favorite_genre", user_prefs.get("genre"))
+    preferred_mood = user_prefs.get("favorite_mood", user_prefs.get("mood"))
+    target_energy = user_prefs.get("target_energy", user_prefs.get("energy"))
+    likes_acoustic = user_prefs.get("likes_acoustic")
+
+    song_genre = song.get("genre")
+    song_mood = song.get("mood")
+    song_energy = song.get("energy")
+    song_acousticness = song.get("acousticness")
+
+    # Weighted categorical matches (experiment: genre weight halved)
+    if isinstance(preferred_genre, str) and isinstance(song_genre, str) and song_genre.lower() == preferred_genre.lower():
+        score += 1.0
         reasons.append("genre match")
 
-    if song.get("mood") == user_prefs.get("mood"):
+    if isinstance(preferred_mood, str) and isinstance(song_mood, str) and song_mood.lower() == preferred_mood.lower():
         score += 1.0
         reasons.append("mood match")
 
-    # Weighted numerical proximity on energy
-    target_energy = user_prefs.get("energy")
-    song_energy = song.get("energy")
+    # Weighted numerical proximity on energy (experiment: energy weight doubled)
     if target_energy is not None and song_energy is not None:
         proximity = 1.0 - abs(float(song_energy) - float(target_energy))
         proximity = max(0.0, min(1.0, proximity))
-        score += 1.5 * proximity
+        score += 3.0 * proximity
         reasons.append(f"energy proximity {proximity:.2f}")
+
+    # Acoustic preference bonus
+    if isinstance(likes_acoustic, bool) and song_acousticness is not None:
+        acousticness = float(song_acousticness)
+        if likes_acoustic and acousticness >= 0.6:
+            score += 1.0
+            reasons.append("acoustic-friendly")
+        elif not likes_acoustic and acousticness <= 0.4:
+            score += 1.0
+            reasons.append("non-acoustic vibe")
 
     return score, reasons
 

@@ -1,111 +1,67 @@
 # 🎧 Model Card: Music Recommender Simulation
 
-## 1. Model Name  
+## 1. Model Name
 
-Give your model a short, descriptive name.  
-Example: **VibeFinder 1.0**  
-
----
-
-## 2. Intended Use  
-
-Describe what your recommender is designed to do and who it is for. 
-
-Prompts:  
-
-- What kind of recommendations does it generate  
-- What assumptions does it make about the user  
-- Is this for real users or classroom exploration  
+VibeFinder 1.0
 
 ---
 
-## 3. How the Model Works  
+## 2. Goal / Task
 
-Explain your scoring approach in simple language.  
-
-Prompts:  
-
-- What features of each song are used (genre, energy, mood, etc.)  
-- What user preferences are considered  
-- How does the model turn those into a score  
-- What changes did you make from the starter logic  
-
-Avoid code here. Pretend you are explaining the idea to a friend who does not program.
+This recommender suggests songs from a small catalog.
+It tries to match a user’s genre, mood, energy, and acoustic preference.
+The goal is to return a top-5 list that feels close to the user profile.
 
 ---
 
-## 4. Data  
+## 3. Data Used
 
-Describe the dataset the model uses.  
-
-Prompts:  
-
-- How many songs are in the catalog  
-- What genres or moods are represented  
-- Did you add or remove data  
-- Are there parts of musical taste missing in the dataset  
+The dataset has 20 songs.
+Each song includes genre, mood, energy, tempo, valence, danceability, and acousticness.
+Genres are varied, but the catalog is still small.
+Because the data is limited, many music styles and edge cases are missing.
 
 ---
 
-## 5. Strengths  
+## 4. Algorithm Summary
 
-Where does your system seem to work well  
-
-Prompts:  
-
-- User types for which it gives reasonable results  
-- Any patterns you think your scoring captures correctly  
-- Cases where the recommendations matched your intuition  
+The system gives points for genre match and mood match.
+It gives more points when the song energy is close to the target energy.
+It also adds a bonus when acousticness matches the user’s acoustic preference.
+In the experiment, energy weight was increased and genre weight was reduced.
+That made energy similarity more important in ranking.
 
 ---
 
-## 6. Limitations and Bias 
+## 5. Observed Behavior / Biases
 
-Where the system struggles or behaves unfairly. 
-
-Prompts:  
-
-- Features it does not consider  
-- Genres or moods that are underrepresented  
-- Cases where the system overfits to one preference  
-- Ways the scoring might unintentionally favor some users  
+The model can create an energy filter bubble.
+Songs with very similar energy can rank high even if genre is different.
+This is stronger after the weight shift experiment.
+So users may get less variety than expected.
 
 ---
 
-## 7. Evaluation  
+## 6. Evaluation Process
 
-How you checked whether the recommender behaved as expected. 
-
-Prompts:  
-
-- Which user profiles you tested  
-- What you looked for in the recommendations  
-- What surprised you  
-- Any simple tests or comparisons you ran  
-
-No need for numeric metrics unless you created some.
+I tested three profiles: High-Energy Pop, Chill Lofi, and Deep Intense Rock.
+I compared the top-5 outputs and checked if reasons matched each profile.
+I also ran a weight-shift experiment (higher energy weight, lower genre weight).
+A surprise was that non-target genres moved up when their energy was very close to target.
 
 ---
 
-## 8. Future Work  
+## 7. Intended Use and Non-Intended Use
 
-Ideas for how you would improve the model next.  
-
-Prompts:  
-
-- Additional features or preferences  
-- Better ways to explain recommendations  
-- Improving diversity among the top results  
-- Handling more complex user tastes  
+Intended use: classroom exploration of simple recommender behavior.
+It is useful for learning how preference weights change outputs.
+Non-intended use: real production music recommendations.
+It should not be used for high-stakes decisions or personalized profiling.
 
 ---
 
-## 9. Personal Reflection  
+## 8. Ideas for Improvement
 
-A few sentences about your experience.  
-
-Prompts:  
-
-- What you learned about recommender systems  
-- Something unexpected or interesting you discovered  
-- How this changed the way you think about music recommendation apps  
+1. Add diversity controls so top results are not all from one energy band.
+2. Let users choose ranges (not single targets) for energy and mood.
+3. Learn weights from feedback instead of fixed manual weights.
