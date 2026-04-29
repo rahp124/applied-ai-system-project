@@ -2,9 +2,9 @@
 
 **Author:** Rahul Punji
 
-## 📺 Demo Walkthrough
+## Demo Walkthrough
 
-👉 ([YOUR_LOOM_LINK_HERE](https://www.loom.com/share/908477a49232453a9a75943fbe153e3f))\*\*
+👉 ([DEMO](https://www.loom.com/share/908477a49232453a9a75943fbe153e3f))\*\*
 
 ---
 
