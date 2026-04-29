@@ -1,6 +1,8 @@
 import csv
+import json
 from typing import List, Dict, Tuple, Optional
 from dataclasses import dataclass
+from openai import OpenAI
 
 @dataclass
 class Song:
@@ -135,3 +137,113 @@ def recommend_songs(user_prefs: Dict, songs: List[Dict], k: int = 5) -> List[Tup
         (song, score, "; ".join(reasons) if reasons else "closest overall match")
         for song, score, reasons in ranked
     ]
+
+def parse_vibe_to_dict(user_text: str, api_key: str) -> Dict:
+    """
+    Parse user's text description of their music vibe into a structured dictionary
+    using OpenAI's API with JSON-formatted response.
+    
+    Args:
+        user_text: The user's natural language description of their music preferences
+        api_key: OpenAI API key for authentication
+    
+    Returns:
+        A dictionary with keys: favorite_genre, favorite_mood, target_energy, likes_acoustic.
+        Falls back to sensible defaults if API call fails.
+    """
+    # Initialize OpenAI client with provided API key
+    client = OpenAI(api_key=api_key)
+    
+    # System prompt for music data analyst
+    system_prompt = """You are a music data analyst. Analyze the user's text description of their music preferences 
+and output a JSON object with exactly these four keys:
+- 'favorite_genre': a string representing the music genre (e.g., "Electronic", "Jazz", "Pop")
+- 'favorite_mood': a string representing the mood (e.g., "Energetic", "Relaxing", "Focus")
+- 'target_energy': a float between 0.0 and 1.0 representing desired energy level
+- 'likes_acoustic': a boolean indicating whether the user prefers acoustic elements
+
+Respond ONLY with valid JSON, no additional text."""
+    
+    try:
+        # Make API call with JSON response format enforcement
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_text}
+            ],
+            response_format={"type": "json_object"}
+        )
+        
+        # Extract and parse the JSON response
+        response_text = response.choices[0].message.content
+        parsed_dict = json.loads(response_text)
+        
+        return parsed_dict
+        
+    except Exception as e:
+        print(f"Warning: Failed to parse vibe with OpenAI API: {e}")
+        
+        # Return default fallback dictionary
+        return {
+            "favorite_genre": "Electronic",
+            "favorite_mood": "Focus",
+            "target_energy": 0.75,
+            "likes_acoustic": False
+        }
+
+def generate_curator_response(user_text: str, recommended_songs: List[Dict], api_key: str) -> str:
+    """
+    Generate a conversational curator response explaining the recommended song setlist.
+    
+    Args:
+        user_text: The user's original description of their music vibe
+        recommended_songs: List of dictionaries containing song metadata and matching reasons
+        api_key: OpenAI API key for authentication
+    
+    Returns:
+        A conversational string response from the music curator
+    """
+    # Initialize OpenAI client with provided API key
+    client = OpenAI(api_key=api_key)
+    
+    # System prompt for music curator persona
+    system_prompt = """You are a cool, knowledgeable music curator with great taste. 
+Your job is to explain why you've curated a specific 3-song setlist based on a listener's requested vibe. 
+Write in a short, conversational, friendly tone. 
+Naturally weave in the song titles and some of the numeric reasons (like energy levels, mood matches, or acoustic preferences) 
+to show why each song was chosen. 
+Make it feel like a personal recommendation from someone who really gets music."""
+    
+    # Format recommended songs for the user prompt
+    songs_description = ""
+    for i, song_info in enumerate(recommended_songs, 1):
+        title = song_info.get('title', 'Unknown')
+        artist = song_info.get('artist', 'Unknown')
+        genre = song_info.get('genre', 'Unknown')
+        mood = song_info.get('mood', 'Unknown')
+        energy = song_info.get('energy', 'N/A')
+        reasons = song_info.get('reasons', 'great match')
+        
+        songs_description += f"\n{i}. \"{title}\" by {artist} - Genre: {genre}, Mood: {mood}, Energy: {energy}, Why picked: {reasons}"
+    
+    user_prompt = f"""The listener requested: "{user_text}"
+
+Here's the 3-song setlist I've curated for them:{songs_description}
+
+Please write a short, conversational response explaining why I chose this setlist based on their requested vibe. Naturally incorporate the song titles and weave in the energy levels and other reasons."""
+    
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ]
+        )
+        
+        return response.choices[0].message.content
+        
+    except Exception as e:
+        print(f"Warning: Failed to generate curator response: {e}")
+        return "I had trouble putting together my curator thoughts, but these songs should really match your vibe!"
