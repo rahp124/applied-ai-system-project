@@ -18,14 +18,15 @@ This project extends the original simulation by implementing a Retrieval-Augment
 
 The system operates in three main phases: Translation, Retrieval, and Synthesis.
 
+```mermaid
 graph TD
-UserInput[User Input: Natural Language]
-Translator[Translator Agent: LLM JSON Output]
-JSONCheck[Automated Guardrails: JSON Check & Logging]
-Retriever[Song Search & Ranking: Python Scoring Engine]
-Database[Database: songs.csv]
-Synthesis[Synthesis Agent: LLM Curator]
-Output[Final Conversational Response]
+    UserInput[User Input: Natural Language]
+    Translator[Translator Agent: LLM JSON Output]
+    JSONCheck[Automated Guardrails: JSON Check & Logging]
+    Retriever[Song Search & Ranking: Python Scoring Engine]
+    Database[Database: songs.csv]
+    Synthesis[Synthesis Agent: LLM Curator]
+    Output[Final Conversational Response]
 
     UserInput -->|Text Request| Translator
     Translator -.->|Draft JSON Profile| JSONCheck
@@ -36,6 +37,7 @@ Output[Final Conversational Response]
     Retriever -->|Top Songs & Metadata| Synthesis
     UserInput -->|Original Context| Synthesis
     Synthesis -->|Approved Response| Output
+```
 
 Translation: The user's text is sent to the OpenAI API, prompted to output a formatted JSON object representing the audio target variables.
 
