@@ -1,36 +1,31 @@
-# AI Powered Music Recommender (RAG Pipeline)
+AI Powered Music Recommender (RAG Pipeline)
 
-**Author:** Rahul Punji
+Author: Rahul Punji
 
-## Demo Walkthrough
+Demo Walkthrough
 
-👉 **[DEMO](https://www.loom.com/share/908477a49232453a9a75943fbe153e3f)**
+👉 DEMO
 
----
+📌 Project Overview
 
-## 📌 Project Overview
-
-**Original Base Project:** _Content Based Music Recommender Simulation_
+Original Base Project: Content Based Music Recommender Simulation
 Originally, this system was a deterministic recommendation engine. It parsed a local CSV database of songs and scored them against a hardcoded Python dictionary by calculating the continuous vector proximity and categorical matches of acoustic features.
 
-**The AI Extension:** _RAG Pipeline_
+The AI Extension: RAG Pipeline
 This project extends the original simulation by implementing a Retrieval-Augmented Generation pipeline to bridge the gap between subjective human language and math. Instead of editing a Python dictionary, users type how they feel or what they are doing. The AI translates that vibe into parameters, retrieves the mathematically closest tracks from the database, and acts as a curator to explain why those specific songs fit the user's request.
 
----
-
-## 🏗️ Architecture Overview
+🏗️ Architecture Overview
 
 The system operates in three main phases: Translation, Retrieval, and Synthesis.
 
-```mermaid
 graph TD
-    UserInput[User Input: Natural Language]
-    Translator[Translator Agent: LLM JSON Output]
-    JSONCheck[Automated Guardrails: JSON Check & Logging]
-    Retriever[Song Search & Ranking: Python Scoring Engine]
-    Database[Database: songs.csv]
-    Synthesis[Synthesis Agent: LLM Curator]
-    Output[Final Conversational Response]
+UserInput[User Input: Natural Language]
+Translator[Translator Agent: LLM JSON Output]
+JSONCheck[Automated Guardrails: JSON Check & Logging]
+Retriever[Song Search & Ranking: Python Scoring Engine]
+Database[Database: songs.csv]
+Synthesis[Synthesis Agent: LLM Curator]
+Output[Final Conversational Response]
 
     UserInput -->|Text Request| Translator
     Translator -.->|Draft JSON Profile| JSONCheck
@@ -41,7 +36,6 @@ graph TD
     Retriever -->|Top Songs & Metadata| Synthesis
     UserInput -->|Original Context| Synthesis
     Synthesis -->|Approved Response| Output
-
 
 Translation: The user's text is sent to the OpenAI API, prompted to output a formatted JSON object representing the audio target variables.
 
@@ -60,23 +54,19 @@ Set up a virtual environment:
 python -m venv venv
 source venv/bin/activate
 
-
 Install dependencies:
 
 pip install openai python-dotenv
-
 
 Configure your API Key:
 Create a file named .env in the root directory and add your OpenAI API key:
 
 OPENAI_API_KEY=sk-your_api_key_here
 
-
 Run the application:
 
 cd src
 python main.py
-
 
 💬 Sample Interactions
 
@@ -105,4 +95,3 @@ JSON Guardrails: LLMs are prone to formatting errors. I implemented a try/except
 💼 Portfolio Artifact: Developer Identity
 
 Building this pipeline demonstrated my ability as a Software Engineer to bridge deterministic backend systems with generative models. By integrating an LLM to handle human input while relying on vector proximity for data retrieval, I learned how to build systems that are accessible to users while remaining controllable and reliable for developers.
-```
