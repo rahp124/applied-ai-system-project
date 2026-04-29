@@ -4,7 +4,7 @@ Author: Rahul Punji
 
 Demo Walkthrough
 
-👉 DEMO
+👉 ([DEMO](https://www.loom.com/share/908477a49232453a9a75943fbe153e3f))
 
 📌 Project Overview
 
