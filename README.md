@@ -1,16 +1,24 @@
-# Vibe-to-Vector: AI-Powered Music Recommender (RAG Pipeline)
+# AI Powered Music Recommender (RAG Pipeline)
 
 **Author:** Rahul Punji
 
+## 📺 Demo Walkthrough
+
+👉 ([YOUR_LOOM_LINK_HERE](https://www.loom.com/share/908477a49232453a9a75943fbe153e3f))\*\*
+
+---
+
 ## 📌 Project Overview
 
-**Original Project:** _Content-Based Music Recommender Simulation_
-Originally, this system was a deterministic, math-based recommendation engine. It parsed a CSV database of songs and scored them against a rigid, hardcoded user profile dictionary (e.g., `target_energy: 0.8`) by calculating the continuous vector proximity and categorical matches of audio features.
+**Original Base Project:** _Content Based Music Recommender Simulation_
+Originally, this system was a deterministic recommendation engine. It parsed a local CSV database of songs and scored them against a hardcoded Python dictionary by calculating the continuous vector proximity and categorical matches of acoustic features.
 
-**The AI Extension:** _Vibe-to-Vector RAG Pipeline_
-This project extends the original simulation by implementing a Retrieval-Augmented Generation (RAG) pipeline to bridge the gap between subjective human language and rigid algorithmic math. Instead of editing a Python dictionary, users can simply type how they feel or what they are doing. The AI translates that semantic "vibe" into mathematical parameters, retrieves the mathematically closest tracks, and then acts as an AI curator to explain why those specific songs fit the user's request.
+**The AI Extension:** _RAG Pipeline_
+This project extends the original simulation by implementing a Retrieval-Augmented Generation pipeline to bridge the gap between subjective human language and math. Instead of editing a Python dictionary, users type how they feel or what they are doing. The AI translates that vibe into parameters, retrieves the mathematically closest tracks from the database, and acts as a curator to explain why those specific songs fit the user's request.
 
-## 🏗️ Architecture & Data Flow
+---
+
+## 🏗️ Architecture Overview
 
 The system operates in three main phases: Translation, Retrieval, and Synthesis.
 
@@ -34,52 +42,51 @@ graph TD
     UserInput --> |Original Context| Synthesis
     Synthesis --> |Approved Response| Output
 
-Translation (Agent): The user's text is sent to the OpenAI API, heavily prompted to output a strictly formatted JSON object representing the audio target variables.
 
-Retrieval (RAG): The system validates the JSON. If valid, it passes the parameters to the original scoring engine to rank and retrieve the top tracks from the dataset.
+Translation: The user's text is sent to the OpenAI API, prompted to output a formatted JSON object representing the audio target variables.
 
-Synthesis (Curator): The retrieved track metadata and the original user prompt are sent back to the LLM to generate a conversational, explainable AI response.
+Retrieval: The system validates the JSON. If valid, it passes the parameters to the original scoring engine to retrieve the top tracks from the dataset.
 
-🚀 Setup Instructions
+Synthesis: The retrieved track metadata and the original user prompt are sent back to the LLM to generate an explainable AI response.
+
 To run this project locally, follow these steps:
 
-Clone the repository:
-git clone [YOUR_REPO_LINK]
-cd [YOUR_REPO_FOLDER]
+Clone the repository
 
-Set up a virtual environment (Recommended):
 python -m venv venv
-source venv/bin/activate  (Mac/Linux) OR venv\Scripts\activate (Windows)
-
+source venv/bin/activate
 Install dependencies:
-pip install openai python-dotenv
 
+pip install openai python-dotenv
 Configure your API Key:
 Create a file named .env in the root directory and add your OpenAI API key:
-OPENAI_API_KEY=your_api_key_here
+OPENAI_API_KEY=sk-your_api_key_here
 
 Run the application:
-python -m src.main
 
-💬 Sample Interactions
-Test Case 1: The Standard Use Case
-Input: "I'm pulling an all-nighter to finish a coding project. I need something with a steady driving beat to keep me awake, but no vocals to distract me."
-System JSON Translation: {'favorite_genre': 'Electronic', 'favorite_mood': 'Focus', 'target_energy': 0.7, 'likes_acoustic': False}
-Output: > "To keep you locked in for your coding session, I pulled 'Cyber Pulse' and 'Neon Drive'. Both have that steady, driving electronic energy (around 0.75) you need to stay awake, but they sit squarely in the 'Focus' mood without distracting acoustic elements or vocals."
+cd src
+python main.py
 
-Test Case 2: The Edge Case / Adversarial Profile
-Input: "I want to go to sleep, give me the heaviest, loudest, most intense metal music possible."
-System JSON Translation: {'favorite_genre': 'Metal', 'favorite_mood': 'Intense', 'target_energy': 0.95, 'likes_acoustic': False}
-Output: > "While heavy metal isn't the typical choice for sleeping, I've queued up 'Stadium Roar' and 'Iron Thunder'. They match your request for maximum intensity and energy perfectly. Sweet dreams!"
+Test Case:
+Input: "I'm pulling an all nighter to finish a coding project. I need something with a steady driving beat to keep me awake, but no vocals to distract me."
 
-🧠 Design Decisions & Trade-offs
-RAG over Pure Generation: I chose a RAG architecture instead of just asking an LLM to "name 3 songs." By forcing the LLM to translate text into JSON, I maintain strict, deterministic control over the actual database search. The AI cannot hallucinate a song that doesn't exist in my songs.csv catalog.
+System JSON Translation: {'favorite_genre': 'Electronic', 'favorite_mood': 'Focus', 'target_energy': 0.8, 'likes_acoustic': False}
 
-JSON Guardrails: LLMs are prone to formatting errors. I implemented a try/except block and the response_format={ "type": "json_object" } parameter. The trade-off is slightly higher latency, but it ensures the core Python logic never crashes due to a bad string. If the LLM fails, it gracefully degrades to a default dictionary profile.
+AI Curator Output: > "Hey there! I totally get that you need something to keep your brain buzzing while you tackle that coding project. So, I’ve put together a 3-song setlist that’ll give you the steady driving beat you’re after, without any distracting vocals.
 
-🧪 Testing Summary
-Testing revealed that the system handles standard emotional requests (happy, sad, energetic) flawlessly. However, I discovered that highly contradictory inputs (e.g., "fast-paced relaxing acoustic") occasionally caused the LLM to average out the variables, resulting in a mediocre target_energy score of 0.5 rather than committing to an edge case. Implementing the JSON fallback dictionary successfully prevented any crashes during these adversarial tests.
+First up, we have **"Neon Bazaar" by Rhythm Cartel**. This track has a euphoric vibe with an energy level of 0.81 and a near-perfect energy proximity of 0.99. It’s got a great non-acoustic feel, which means it’ll keep you engaged without drawing your focus away from your code. Perfect for keeping that adrenaline flowing!
 
-💡 Reflection
-[WRITE 1-2 PARAGRAPHS HERE. Mention what it was like bridging standard Python logic with generative AI. How did learning to write strict system prompts change how you view software engineering? Mention how this project helped you understand how real platforms handle massive amounts of subjective user data.]
+Next, I’m bringing in **"Sunrise City" by Neon Echo**. This one really hits that happy mood at an energy level of 0.82 and also has a high energy proximity of 0.98. The driving beat in this track will help you power through those late-night coding sessions while keeping your spirits up. It’s like a little burst of sunshine for your project!
+
+Lastly, we wrap up with **"Rooftop Lights" by Indigo Parade**. This indie pop gem carries a happy energy, though slightly lower at 0.76, but still maintains a solid energy proximity of 0.96. It's a bit more chill but still has enough groove to keep you in the zone. This one will give you a nice balance as you navigate through the night.
+
+So, with this mix of euphoric beats and happy vibes, you’ll be well-equipped to take on that all-nighter! Happy coding! 🎶"
+
+
+Design Decisions:
+RAG over Pure Generation: I chose RAG instead of just asking an LLM. By forcing the LLM to translate text into JSON, I maintain deterministic control over the database search. The AI cannot hallucinate a song that doesn't exist in my catalog.
+
+LLMs are prone to formatting errors. I implemented a try/except block and the response_format parameter. Slightly higher latency, but it ensures the core logic never crashes due to a bad string.
+
+Building this pipeline demonstrated my ability as a Software Engineer to bridge deterministic backend systems with generative models. By integrating an LLM to handle human input while relying on vector proximity for data retrieval, I learned how to build systems that are accessible to users while remaining controllable and reliable for developers.
 ```

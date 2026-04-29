@@ -1,67 +1,29 @@
-# 🎧 Model Card: Music Recommender Simulation
+**Developer:** Rahul Punji
 
-## 1. Model Name
+## Reliability and Evaluation: How I Tested and Improved the AI
 
-VibeFinder 1.0
+To ensure this system was robust enough for production, I relied on **logging and error handling** combined with **human evaluation**. Because the core pipeline relies on an LLM outputting perfectly formatted JSON, my primary evaluation metric was whether the system could survive a bad LLM response without crashing.
 
----
+**Testing Summary:**
+the AI struggled when given highly contradictory context ("fast paced relaxing lullaby"). System reliability reached 100% after adding a try/except validation rule that logged JSON parsing failures and safely triggered a fallback default profile.
 
-## 2. Goal / Task
+## 5. Reflection and Ethics: Thinking Critically About the AI
 
-This recommender suggests songs from a small catalog.
-It tries to match a user’s genre, mood, energy, and acoustic preference.
-The goal is to return a top-5 list that feels close to the user profile.
+### Limitations and Biases
 
----
+This system inherits inherent biases from both the LLM and the local dataset. The OpenAI model is heavily skewed towards Western music and popular genres. If a user inputs complex cultural requests, the LLM often forces them into generic buckets. Because the retrieval acts on a limited local dataset, the retriever cannot fulfill a perfect JSON request if the catalog lacks that specific genre.
 
-## 3. Data Used
+### Potential Misuse and Prevention
 
-The dataset has 20 songs.
-Each song includes genre, mood, energy, tempo, valence, danceability, and acousticness.
-Genres are varied, but the catalog is still small.
-Because the data is limited, many music styles and edge cases are missing.
+A potential misuse of this system involves prompt injection or abuse. Someone could input a complex text payload or malicious instructions designed to bypass the JSON formatting, potentially crashing the application or racking up costs. To prevent this, I implemented strict enforcement using the OpenAI API and wrapped the parsing logic in a try/except guardrail. If the system detects such output, it silently catches the error and falls back to a default user profile.
 
----
+### Testing Surprises
 
-## 4. Algorithm Summary
+During reliability testing, I was surprised by how the LLM handled highly contradictory inputs. Instead of prioritizing one trait, the LLM often averaged the values out. This highlighted that LLMs tend to seek mathematical consensus.
 
-The system gives points for genre match and mood match.
-It gives more points when the song energy is close to the target energy.
-It also adds a bonus when acousticness matches the user’s acoustic preference.
-In the experiment, energy weight was increased and genre weight was reduced.
-That made energy similarity more important in ranking.
+### AI Collaboration Reflection
 
----
+Building this pipeline required heavy collaboration with GitHub Copilot/Chat, which presented both massive time savings and subtle debugging challenges.
 
-## 5. Observed Behavior / Biases
-
-The model can create an energy filter bubble.
-Songs with very similar energy can rank high even if genre is different.
-This is stronger after the weight shift experiment.
-So users may get less variety than expected.
-
----
-
-## 6. Evaluation Process
-
-I tested three profiles: High-Energy Pop, Chill Lofi, and Deep Intense Rock.
-I compared the top-5 outputs and checked if reasons matched each profile.
-I also ran a weight-shift experiment (higher energy weight, lower genre weight).
-A surprise was that non-target genres moved up when their energy was very close to target.
-
----
-
-## 7. Intended Use and Non-Intended Use
-
-Intended use: classroom exploration of simple recommender behavior.
-It is useful for learning how preference weights change outputs.
-Non-intended use: real production music recommendations.
-It should not be used for high-stakes decisions or personalized profiling.
-
----
-
-## 8. Ideas for Improvement
-
-1. Add diversity controls so top results are not all from one energy band.
-2. Let users choose ranges (not single targets) for energy and mood.
-3. Learn weights from feedback instead of fixed manual weights.
+- **Helpful Suggestion:** Copilot was useful when implementing the data ingestion layer. It accurately anticipated my need to cast numerical CSV columns to floats and ints, writing a dictionary comprehension to handle the type casting.
+- **Flawed Suggestion:** When writing the sorting logic for the recommendation engine, Copilot confidently suggested using list.sort(). This was somewhat flawed because it mutated my original catalog of songs in place. I had to manually intervene, debug, and switch the logic to use Python's sorted function to ensure the core dataset remained for subsequent searches.
