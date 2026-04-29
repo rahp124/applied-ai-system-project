@@ -1,5 +1,3 @@
-Here is the fully corrected README text. Just copy and paste this over everything in your current file:
-
 # AI Powered Music Recommender (RAG Pipeline)
 
 **Author:** Rahul Punji
