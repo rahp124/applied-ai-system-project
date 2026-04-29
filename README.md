@@ -32,15 +32,15 @@ graph TD
     Synthesis[Synthesis Agent: LLM Curator]
     Output[Final Conversational Response]
 
-    UserInput --> |Text Request| Translator
-    Translator -. |Draft JSON Profile| JSONCheck
-    JSONCheck -. |Logged Failure / Fallback| Translator
-    JSONCheck --> |Validated JSON Profile| Retriever
-    Retriever -. |Query| Database
-    Database -. |Song Data| Retriever
-    Retriever --> |Top Songs & Metadata| Synthesis
-    UserInput --> |Original Context| Synthesis
-    Synthesis --> |Approved Response| Output
+    UserInput -->|Text Request| Translator
+    Translator -.->|Draft JSON Profile| JSONCheck
+    JSONCheck -.->|Logged Failure / Fallback| Translator
+    JSONCheck -->|Validated JSON Profile| Retriever
+    Retriever -.->|Query| Database
+    Database -.->|Song Data| Retriever
+    Retriever -->|Top Songs & Metadata| Synthesis
+    UserInput -->|Original Context| Synthesis
+    Synthesis -->|Approved Response| Output
 
 
 Translation: The user's text is sent to the OpenAI API, prompted to output a formatted JSON object representing the audio target variables.
